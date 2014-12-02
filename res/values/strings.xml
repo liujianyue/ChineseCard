@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">居民身份证工具</string>
+    <string name="hint_query">请输入15或18位身份证号码</string>
+    <string name="hint_generate">选择条件后，按“生成”按钮</string>
+    <string name="query">查询</string>
+    <string name="verify">校验</string>
+    <string name="upgrade">升位</string>
+    <string name="clear">清空</string>
+    <string name="generate">生成</string>
+    <string name="address">归属地：</string>
+    <string name="gender">性别：</string>
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="age">年龄：</string>
+    <string name="birth">出生日期：</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+    <string name="province">省份：</string>
+    <string name="city">城市：</string>
+    <string name="county">县区：</string>
+    <string name="tab_query">查询&amp;校验&amp;升位</string>
+    <string name="tab_generate">生成</string>
+    <string name="prompt_province">请选择省份</string>
+    <string name="prompt_city">请选择城市</string>
+    <string name="prompt_county">请选择县区</string>
+    <string name="error_must_be_fifteen">请输入15位的身份证号码</string>
+    <string name="error_must_be_eighteen">请输入18位的身份证号码</string>
+    <string name="error_must_be_fifteen_or_eighteen">请输入15或18位的身份证号码</string>
+    <string name="result_query_prompt">查询结果如下：</string>
+    <string name="result_identity_number">身份证号码：</string>
+    <string name="result_verify_success">经校验此身份证号码为合法号码</string>
+    <string name="result_verify_failure">该身份证号码的校验位不正确，应该为</string>
+    <string name="result_upgrade_prefix">升位后的身份证号码为: </string>
+    <string name="action_settings">Settings</string>
+</resources>
