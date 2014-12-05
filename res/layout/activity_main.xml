@@ -16,6 +16,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="5dp">
+
+            <fragment android:name="com.codemany.chinesecard.QueryFragment"
+                android:id="@+id/fragment_query"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <fragment android:name="com.codemany.chinesecard.GenerateFragment"
+                android:id="@+id/fragment_generate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </FrameLayout>
     </LinearLayout>
 </TabHost>

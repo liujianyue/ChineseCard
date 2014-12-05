@@ -2,23 +2,24 @@ package com.codemany.chinesecard;
 
 import java.util.GregorianCalendar;
 
-import android.app.Activity;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class QueryActivity extends Activity {
-    private static final String TAG = "QueryActivity";
+public class QueryFragment extends Fragment {
+    private static final String TAG = "QueryFragment";
 
     // wi = 2(n-1)(mod 11)
     private final int[] wi = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1};
@@ -28,18 +29,19 @@ public class QueryActivity extends Activity {
     private EditText edtIdNum;
     private KeyboardView kbdView;
 
+    private View rootView;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_query);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_query, container, false);
 
-        edtIdNum = (EditText)findViewById(R.id.edt_id_num);
+        edtIdNum = (EditText)rootView.findViewById(R.id.edt_id_num);
 
-        kbdView = (KeyboardView)findViewById(R.id.kbd_view);
-        kbdView.setKeyboard(new Keyboard(this, R.xml.qwerty));
+        kbdView = (KeyboardView)rootView.findViewById(R.id.kbd_view);
+        kbdView.setKeyboard(new Keyboard(getActivity(), R.xml.qwerty));
         kbdView.setEnabled(true);
         kbdView.setPreviewEnabled(true);
-        kbdView.setOnKeyboardActionListener(new OnKeyboardActionListener() {
+        kbdView.setOnKeyboardActionListener(new KeyboardView.OnKeyboardActionListener() {
             @Override
             public void onKey(int primaryCode, int[] keyCodes) {
                 Log.d(TAG, "onKey? primaryCode=" + primaryCode);
@@ -118,7 +120,7 @@ public class QueryActivity extends Activity {
             }
         });
 
-        Button btnQuery = (Button)findViewById(R.id.btn_query);
+        Button btnQuery = (Button)rootView.findViewById(R.id.btn_query);
         btnQuery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,7 +146,7 @@ public class QueryActivity extends Activity {
             }
         });
 
-        Button btnVerify = (Button)findViewById(R.id.btn_verify);
+        Button btnVerify = (Button)rootView.findViewById(R.id.btn_verify);
         btnVerify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,7 +166,7 @@ public class QueryActivity extends Activity {
             }
         });
 
-        Button btnUpgrade = (Button)findViewById(R.id.btn_upgrade);
+        Button btnUpgrade = (Button)rootView.findViewById(R.id.btn_upgrade);
         btnUpgrade.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,7 +182,7 @@ public class QueryActivity extends Activity {
             }
         });
 
-        Button btnClear = (Button)findViewById(R.id.btn_clear);
+        Button btnClear = (Button)rootView.findViewById(R.id.btn_clear);
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,6 +190,8 @@ public class QueryActivity extends Activity {
                 edtIdNum.setText("");
             }
         });
+
+        return rootView;
     }
 
     private void hideKeyboard() {
@@ -205,7 +209,7 @@ public class QueryActivity extends Activity {
     }
 
     private void clearResultText() {
-        TextView resultEdit = (TextView)findViewById(R.id.tv_result);
+        TextView resultEdit = (TextView)rootView.findViewById(R.id.tv_result);
         resultEdit.setText("");
     }
 
@@ -240,12 +244,12 @@ public class QueryActivity extends Activity {
     }
 
     private void showResult(String message) {
-        TextView tv = (TextView)findViewById(R.id.tv_result);
+        TextView tv = (TextView)rootView.findViewById(R.id.tv_result);
         tv.setText(message);
     }
 
     private void showErrorMessage(int resId) {
-        Toast.makeText(this, resId, Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), resId, Toast.LENGTH_LONG).show();
     }
 
     private String getGender(String number) {
@@ -274,8 +278,8 @@ public class QueryActivity extends Activity {
 
     private String getAddress(String number) {
         StringBuilder sb = new StringBuilder();
-        DBHelper helper = DBHelper.getInstance(this);
-        sb.append(helper.getAddress(this, number.substring(0, 6)));
+        DBHelper helper = DBHelper.getInstance(getActivity());
+        sb.append(helper.getAddress(getActivity(), number.substring(0, 6)));
         helper.close();
         return sb.toString();
     }

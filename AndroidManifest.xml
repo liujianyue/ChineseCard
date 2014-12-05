@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.codemany.chinesecard"
     android:versionCode="1"
-    android:versionName="1.0">
+    android:versionName="1.1">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -22,9 +22,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".QueryActivity" />
-
-        <activity android:name=".GenerateActivity" />
     </application>
 </manifest>

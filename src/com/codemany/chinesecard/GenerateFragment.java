@@ -2,13 +2,15 @@ package com.codemany.chinesecard;
 
 import java.util.Calendar;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
@@ -18,9 +20,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
-public class GenerateActivity extends Activity {
-    private static final int DATE_DIALOG_ID = 0;
-
+public class GenerateFragment extends Fragment {
     // wi = 2(n-1)(mod 11)
     private final int[] wi = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1};
     // check code
@@ -32,21 +32,24 @@ public class GenerateActivity extends Activity {
     private int mDay;
     private String mCode;
 
+    private View rootView;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_generate);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_generate, container, false);
 
         loadSpinner();
         initBirth();
 
-        Button btn = (Button)findViewById(R.id.btn_generate);
+        Button btn = (Button)rootView.findViewById(R.id.btn_generate);
         btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 generateIdNumber();
             }
         });
+
+        return rootView;
     }
 
     private void generateIdNumber() {
@@ -55,7 +58,7 @@ public class GenerateActivity extends Activity {
         sb.append(String.format("%d%02d%02d", mYear, mMonth + 1, mDay));
 
         int rand = (int)(Math.random() * 999);
-        RadioGroup group = (RadioGroup)findViewById(R.id.radio_gender);
+        RadioGroup group = (RadioGroup)rootView.findViewById(R.id.radio_gender);
         int checkedId = group.getCheckedRadioButtonId();
         if ((checkedId == R.id.male && rand % 2 == 0)
                 || (checkedId == R.id.female && rand % 2 != 0)) {
@@ -64,7 +67,7 @@ public class GenerateActivity extends Activity {
         sb.append(String.format("%03d", rand));
         sb.append(getCheckCode(sb.toString()));
 
-        EditText edit = (EditText)findViewById(R.id.edt_id_num);
+        EditText edit = (EditText)rootView.findViewById(R.id.edt_id_num);
         edit.setText(sb);
         edit.setKeyListener(null);
     }
@@ -87,11 +90,12 @@ public class GenerateActivity extends Activity {
     }
 
     private void initBirth() {
-        mBirth = (Button)findViewById(R.id.btn_birth);
+        mBirth = (Button)rootView.findViewById(R.id.btn_birth);
         mBirth.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(DATE_DIALOG_ID);
+                DialogFragment dialogFragment = new DatePickerDialogFragment();
+                dialogFragment.show(getActivity().getSupportFragmentManager(), "DatePicker");
             }
         });
 
@@ -105,18 +109,24 @@ public class GenerateActivity extends Activity {
         updateBirth();
     }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-        case DATE_DIALOG_ID:
+    class DatePickerDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new DatePickerDialog(
+                    getActivity(),
                     this,
-                    mDateSetListener,
                     mYear,
                     mMonth,
                     mDay);
         }
-        return null;
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            mYear = year;
+            mMonth = monthOfYear;
+            mDay = dayOfMonth;
+            updateBirth();
+        }
     }
 
     // updates the date in the TextView
@@ -129,31 +139,20 @@ public class GenerateActivity extends Activity {
         mBirth.setText(sb);
     }
 
-    // the callback received when the user "sets" the date in the dialog
-    private OnDateSetListener mDateSetListener = new OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            mYear = year;
-            mMonth = monthOfYear;
-            mDay = dayOfMonth;
-            updateBirth();
-        }
-    };
-
     private void loadSpinner() {
-        Spinner sprProvince = (Spinner)findViewById(R.id.spr_province);
+        Spinner sprProvince = (Spinner)rootView.findViewById(R.id.spr_province);
         sprProvince.setPrompt(getString(R.string.prompt_province));
         sprProvince.setAdapter(getSpinnerAdapterByParentCode(999999));
         sprProvince.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Spinner sprCity = (Spinner)findViewById(R.id.spr_city);
+                Spinner sprCity = (Spinner)rootView.findViewById(R.id.spr_city);
                 sprCity.setPrompt(getString(R.string.prompt_city));
                 sprCity.setAdapter(getSpinnerAdapterByParentCode(id));
                 sprCity.setOnItemSelectedListener(new OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Spinner sprCounty = (Spinner)findViewById(R.id.spr_county);
+                        Spinner sprCounty = (Spinner)rootView.findViewById(R.id.spr_county);
                         sprCounty.setPrompt(getString(R.string.prompt_county));
                         sprCounty.setAdapter(getSpinnerAdapterByParentCode(id));
                         sprCounty.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -181,8 +180,8 @@ public class GenerateActivity extends Activity {
     }
 
     private SpinnerAdapter getSpinnerAdapterByParentCode(long code) {
-        DBHelper helper = DBHelper.getInstance(this);
-        SpinnerAdapter adapter = helper.getListByParentCode(this, String.valueOf(code));
+        DBHelper helper = DBHelper.getInstance(getActivity());
+        SpinnerAdapter adapter = helper.getListByParentCode(getActivity(), String.valueOf(code));
         helper.close();
         return adapter;
     }

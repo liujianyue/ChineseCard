@@ -1,32 +1,31 @@
 package com.codemany.chinesecard;
 
-import android.app.TabActivity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
 
-public class MainActivity extends TabActivity {
+public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TabHost tabHost = getTabHost();
+        TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
+        tabHost.setup();
 
-        TabSpec tabQuery = tabHost.newTabSpec("tab_query");
-        tabQuery.setIndicator(getString(R.string.tab_query));
-        tabQuery.setContent(new Intent(this, QueryActivity.class));
+        tabHost.addTab(
+                tabHost.newTabSpec("tab_query")
+                        .setIndicator(getString(R.string.tab_query))
+                        .setContent(R.id.fragment_query));
 
-        TabSpec tabGenerate = tabHost.newTabSpec("tab_generate");
-        tabGenerate.setIndicator(getString(R.string.tab_generate));
-        tabGenerate.setContent(new Intent(this, GenerateActivity.class));
+        tabHost.addTab(
+                tabHost.newTabSpec("tab_generate")
+                        .setIndicator(getString(R.string.tab_generate))
+                        .setContent(R.id.fragment_generate));
 
-        tabHost.addTab(tabQuery);
-        tabHost.addTab(tabGenerate);
         tabHost.setCurrentTab(0);
     }
 
