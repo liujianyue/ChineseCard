@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.CursorAdapter;
 import android.widget.SimpleCursorAdapter;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -84,7 +85,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     android.R.layout.simple_spinner_item,
                     cursor,
                     new String[] {"division"},
-                    new int[] {android.R.id.text1});
+                    new int[] {android.R.id.text1},
+                    CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
             list.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         }
         return list;
